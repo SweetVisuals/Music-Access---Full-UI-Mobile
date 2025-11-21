@@ -233,18 +233,18 @@ const TopBar: React.FC<TopBarProps> = ({
         )}
 
         {/* SEARCH BAR */}
-        {/* Mobile: Only show if currentView is home. If not expanded, show icon button in actions. If expanded, show absolute full width bar. */}
-        {/* Desktop: Always show centered if home */}
-        
+        {/* Mobile: Expandable full width. Desktop: Centered absolute. */}
         <div 
             className={`
                 transition-all duration-300 z-30
                 ${mobileSearchOpen 
                     ? 'absolute inset-0 bg-[#050505] flex items-center px-4 z-50' 
-                    : 'absolute top-1/2 -translate-y-1/2 hidden lg:block w-32 sm:w-48 md:w-64 lg:w-96 left-14 lg:left-auto'
+                    : 'absolute top-1/2 -translate-y-1/2 hidden lg:block'
                 }
-                ${currentView !== 'home' ? 'hidden lg:block' : ''}
-                ${isFocused && !mobileSearchOpen ? 'lg:w-[40rem] lg:left-[calc(50vw-16rem)] lg:-translate-x-1/2' : 'lg:left-[calc(50vw-16rem)] lg:-translate-x-1/2'}
+                ${/* Desktop Positioning: Center in header space */ ''}
+                ${!mobileSearchOpen ? 'lg:left-1/2 lg:-translate-x-1/2' : ''}
+                ${/* Width Control */ ''}
+                ${!mobileSearchOpen && isFocused ? 'lg:w-[32rem] xl:w-[40rem]' : 'lg:w-96'}
             `}
         >
           {mobileSearchOpen && (

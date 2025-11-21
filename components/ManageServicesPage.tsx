@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { MOCK_ORDERS } from '../constants';
 import { Order } from '../types';
@@ -14,7 +15,8 @@ import {
     Star,
     Shield,
     CheckCircle,
-    ChevronDown
+    ChevronDown,
+    ArrowLeft
 } from 'lucide-react';
 
 const ManageServicesPage: React.FC = () => {
@@ -24,10 +26,10 @@ const ManageServicesPage: React.FC = () => {
   const filteredOrders = MOCK_ORDERS.filter(o => filter === 'all' || o.status === filter);
 
   return (
-    <div className="w-full h-full lg:h-[calc(100vh-9rem)] max-w-[1600px] mx-auto pb-4 pt-6 px-4 lg:px-8 animate-in fade-in duration-500 flex flex-col">
+    <div className="w-full h-full max-w-[1600px] mx-auto pb-4 pt-6 px-4 lg:px-8 animate-in fade-in duration-500 flex flex-col relative">
         
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 shrink-0 gap-4">
+        {/* Header - Hidden on mobile if order selected to maximize space */}
+        <div className={`flex flex-col md:flex-row justify-between items-start md:items-center mb-6 shrink-0 gap-4 ${selectedOrder ? 'hidden lg:flex' : 'flex'}`}>
             <div>
                 <h1 className="text-3xl font-black text-white mb-2">Manage Orders</h1>
                 <p className="text-neutral-500 text-sm">Track and deliver your active services.</p>
@@ -66,18 +68,18 @@ const ManageServicesPage: React.FC = () => {
             </div>
         </div>
 
-        <div className="flex-1 flex gap-8 overflow-hidden flex-col lg:flex-row">
-            {/* Orders List */}
+        <div className="flex-1 flex gap-8 overflow-hidden flex-col lg:flex-row relative">
+            {/* Orders List - Visible on mobile only when no order selected */}
             <div className={`
-                flex flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar shrink-0 transition-all duration-300 pb-32 lg:pb-0
-                ${selectedOrder ? 'hidden lg:flex lg:w-96' : 'w-full lg:w-96'}
+                flex-col gap-4 overflow-y-auto pr-2 custom-scrollbar shrink-0 transition-all duration-300 pb-32 lg:pb-0
+                ${selectedOrder ? 'hidden lg:flex lg:w-96' : 'flex w-full lg:w-96'}
             `}>
                 {filteredOrders.map(order => (
                     <div 
                         key={order.id}
                         onClick={() => setSelectedOrder(order)}
                         className={`
-                            p-4 rounded-xl border cursor-pointer transition-all duration-200 hover:translate-x-1 relative overflow-hidden group
+                            p-4 rounded-xl border cursor-pointer transition-all duration-200 relative overflow-hidden group
                             ${selectedOrder?.id === order.id 
                                 ? 'bg-white/5 border-primary/50 shadow-[0_0_30px_rgba(var(--primary),0.1)] translate-x-1' 
                                 : 'bg-[#0a0a0a] border-neutral-800 hover:border-neutral-700 hover:bg-white/[0.02]'
@@ -120,18 +122,22 @@ const ManageServicesPage: React.FC = () => {
                 )}
             </div>
 
-            {/* Order Detail & Chat Area - Flex-1 to take remaining space */}
+            {/* Order Detail & Chat Area */}
+            {/* Mobile: Fixed Overlay. Desktop: Flex Column */}
             <div className={`
-                flex-1 bg-[#0a0a0a] border border-neutral-800 rounded-xl overflow-hidden flex flex-col relative animate-in fade-in zoom-in-95 duration-300
-                ${!selectedOrder ? 'hidden lg:flex' : 'flex h-[calc(100vh-9rem)] lg:h-auto'}
+                bg-[#0a0a0a] border border-neutral-800 lg:rounded-xl overflow-hidden flex flex-col
+                ${selectedOrder 
+                    ? 'fixed inset-x-0 top-20 bottom-0 z-30 lg:static lg:z-auto lg:flex-1 lg:h-auto animate-in slide-in-from-right-4 duration-300 lg:animate-none' 
+                    : 'hidden lg:flex lg:flex-1'
+                }
             `}>
                 {selectedOrder ? (
-                    <div className="flex-1 flex flex-col h-full">
+                    <div className="flex-1 flex flex-col h-full pb-20 lg:pb-0">
                         {/* Top Bar */}
-                         <div className="h-16 border-b border-neutral-800 flex justify-between items-center px-4 lg:px-6 bg-neutral-900/50 shrink-0 backdrop-blur-sm z-10">
+                         <div className="h-16 border-b border-neutral-800 flex justify-between items-center px-4 lg:px-6 bg-neutral-900/90 shrink-0 backdrop-blur-sm z-10">
                              <div className="flex items-center gap-3 lg:gap-4">
-                                 <button onClick={() => setSelectedOrder(null)} className="lg:hidden p-2 -ml-2 text-neutral-400 hover:text-white text-xs font-bold">
-                                    Back
+                                 <button onClick={() => setSelectedOrder(null)} className="lg:hidden p-2 -ml-2 text-neutral-400 hover:text-white flex items-center gap-1">
+                                    <ArrowLeft size={18} />
                                  </button>
                                  <div>
                                      <div className="flex items-center gap-2">
@@ -159,8 +165,8 @@ const ManageServicesPage: React.FC = () => {
                         {/* Main Content Area */}
                         <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
                             {/* Left: Order Context */}
-                            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 bg-gradient-to-b from-neutral-900/20 to-transparent order-2 lg:order-1 pb-32 lg:pb-8">
-                                <div className="max-w-3xl mx-auto space-y-6 lg:space-y-8">
+                            <div className="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 bg-gradient-to-b from-neutral-900/20 to-transparent order-2 lg:order-1">
+                                <div className="max-w-3xl mx-auto space-y-6 lg:space-y-8 pb-24 lg:pb-0">
                                     {/* Service Title Header */}
                                     <div>
                                         <h1 className="text-lg lg:text-2xl font-black text-white mb-2 leading-tight">{selectedOrder.serviceTitle}</h1>
